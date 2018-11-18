@@ -105,14 +105,13 @@ class SentAnalyzer:
             splits = word.split('_')
             word_list.append(splits[0])
 
-            # great instead of excellent
             if splits[0] == "great":
                 self.great_count += 1
 
             elif splits[0] == "poor":
                 self.poor_count += 1
             
-            # add pos tag with position
+            #Adding Tag with Position
             pos_list.append(splits[1] + str(position))
             position += 1
 
@@ -131,10 +130,9 @@ class SentAnalyzer:
             phrase_index = int(index[0])
             phrs = word_list[phrase_index] + " " + word_list[phrase_index + 1]
 
-            #Print phrs
+            #Print Phrases
             self.pos_hit[phrs] = self.pos_hit.get(phrs, 0.0) + self.calcNear(word_list, 10, phrase_index, "great")
             self.neg_hit[phrs] = self.neg_hit.get(phrs, 0.0) + self.calcNear(word_list, 10, phrase_index, "poor")
-
 
 
 

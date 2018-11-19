@@ -89,8 +89,8 @@ class SentimentAnalyzer:
 
     def semanticOrient(self):
         for phrase in self.pos_hit.keys():
-            #Count Threshold
-            if self.pos_hit[phrase] < 4 and self.neg_hit[phrase] < 4:
+            #Count Threshold Hyperparameter
+            if self.pos_hit[phrase] < 2 and self.neg_hit[phrase] < 2:
                 continue
 
             #Calculating Semantic Orientation

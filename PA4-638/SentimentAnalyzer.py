@@ -17,7 +17,7 @@ class SentimentAnalyzer:
             self.words = []
 
     def __init__(self):
-        #SentimentAnalyzer Initialization
+        #SentimentAnalyzer Initialization - Regex
         self.index_pattern= re.compile("(\d+)")
         self.phrs_pat1 = re.compile("JJ\d* NN[S]?\d* ")
         self.phrs_pat2 = re.compile("RB[S]?[R]?\d* JJ\d* (?![NN][S]?)")
@@ -25,7 +25,7 @@ class SentimentAnalyzer:
         self.phrs_pat4 = re.compile("NN[S]?\d* JJ\d* (?![NN][S]?)")
         self.phrs_pat5 = re.compile("RB[R]?[S]?\d* VB[D]?[N]?[G]?\d* ")
 
-        self.great_count = 0.0
+        self.excellent_count = 0.0
         self.poor_count = 0.0
         self.phrase_polarity = {}
 
@@ -71,16 +71,7 @@ class SentimentAnalyzer:
 
         prediction = 'pos' if polarity > 0 else 'neg'
         return prediction
-
-    def semanticOrient(self):
-        for phrase in self.pos_hit.keys():
-            #Count Threshold
-            if self.pos_hit[phrase] < 4 and self.neg_hit[phrase] < 4:
-                continue
-
-            #Calculating Semantic Orientation
-            self.phrase_polarity[phrase] = math.log(self.pos_hit[phrase] * self.poor_count, 2) - math.log(self.neg_hit[phrase] * self.great_count, 2)
-
+    
     def calcNear(self, word_list, limit, phrs_index, phrs_type):
         #Smoothing
         count = 0.01
@@ -96,6 +87,17 @@ class SentimentAnalyzer:
         
         return count
 
+    def semanticOrient(self):
+        for phrase in self.pos_hit.keys():
+            #Count Threshold
+            if self.pos_hit[phrase] < 4 and self.neg_hit[phrase] < 4:
+                continue
+
+            #Calculating Semantic Orientation
+            self.phrase_polarity[phrase] = math.log(self.pos_hit[phrase] * self.poor_count, 2) - math.log(self.neg_hit[phrase] * self.excellent_count, 2)
+
+
+
     def addExample(self, classes, words):
         word_list = []
         pos_list = []
@@ -105,8 +107,8 @@ class SentimentAnalyzer:
             splits = word.split('_')
             word_list.append(splits[0])
 
-            if splits[0] == "great":
-                self.great_count += 1
+            if splits[0] == "excellent":
+                self.excellent_count += 1
 
             elif splits[0] == "poor":
                 self.poor_count += 1
@@ -131,7 +133,7 @@ class SentimentAnalyzer:
             phrs = word_list[phrase_index] + " " + word_list[phrase_index + 1]
 
             #Print Phrases
-            self.pos_hit[phrs] = self.pos_hit.get(phrs, 0.0) + self.calcNear(word_list, 10, phrase_index, "great")
+            self.pos_hit[phrs] = self.pos_hit.get(phrs, 0.0) + self.calcNear(word_list, 10, phrase_index, "excellent")
             self.neg_hit[phrs] = self.neg_hit.get(phrs, 0.0) + self.calcNear(word_list, 10, phrase_index, "poor")
 
 
